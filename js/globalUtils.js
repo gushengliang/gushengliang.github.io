@@ -1,1 +1,117 @@
-function getDateDiff(e){var t=36e5,r=24*t,n=(new Date).getTime()-e;if(!(n<0)){var i=n/2592e6,s=n/(7*r),o=n/r,a=n/t,g=n/6e4;return result=i>=1?" "+parseInt(i)+"月前":s>=1?" "+parseInt(s)+"周前":o>=1?" "+parseInt(o)+"天前":a>=1?" "+parseInt(a)+"小时前":g>=1?" "+parseInt(g)+"分钟前":" 刚刚",result}}Storage.prototype.setExpire=(e,t,r)=>{let n={data:t,time:Date.now(),expire:r};localStorage.setItem(e,JSON.stringify(n))},Storage.prototype.getExpire=e=>{let t=localStorage.getItem(e);return t?(t=JSON.parse(t),Date.now()-t.time>t.expire?(localStorage.removeItem(e),null):t.data):t},Date.prototype.Format=function(e){var t={"M+":this.getMonth()+1,"d+":this.getDate(),"h+":this.getHours(),"m+":this.getMinutes(),"s+":this.getSeconds(),"q+":Math.floor((this.getMonth()+3)/3),S:this.getMilliseconds()};for(var r in/(y+)/.test(e)&&(e=e.replace(RegExp.$1,(this.getFullYear()+"").substr(4-RegExp.$1.length))),t)new RegExp("("+r+")").test(e)&&(e=e.replace(RegExp.$1,1==RegExp.$1.length?t[r]:("00"+t[r]).substr((""+t[r]).length)));return e};var expireTime1H=36e5;function isNightRange(e,t){let r=new Date;var n=r.getHours()+":"+r.getMinutes(),i=e.split(":");if(2!=i.length)return!1;var s=t.split(":");if(2!=s.length)return!1;var o=n.split(":");if(2!=s.length)return!1;var a=new Date,g=new Date,l=new Date;return a.setHours(i[0]),a.setMinutes(i[1]),g.setHours(s[0]),g.setMinutes(s[1]),l.setHours(o[0]),l.setMinutes(o[1]),console.log(l.getTime()),l.getTime()-a.getTime()>0&&l.getTime()-g.getTime()<0||(console.log("now Date is："+l.getHours()+":"+l.getMinutes()+"，is not Night！"),!1)}var btoa="undefined"!=typeof window&&window.btoa&&window.btoa.bind(window);
+// author by removef
+// https://removeif.github.io/
+Storage.prototype.setExpire = (key, value, expire) => {
+    let obj = {
+        data: value,
+        time: Date.now(),
+        expire: expire
+    };
+    localStorage.setItem(key, JSON.stringify(obj));
+}
+
+Storage.prototype.getExpire = key => {
+    let val = localStorage.getItem(key);
+    if (!val) {
+        return val;
+    }
+    val = JSON.parse(val);
+    if (Date.now() - val.time > val.expire) {
+        localStorage.removeItem(key);
+        return null;
+    }
+    return val.data;
+}
+
+Date.prototype.Format = function (fmt) { //author: meizz
+    var o = {
+        "M+": this.getMonth() + 1,                 //月份
+        "d+": this.getDate(),                    //日
+        "h+": this.getHours(),                   //小时
+        "m+": this.getMinutes(),                 //分
+        "s+": this.getSeconds(),                 //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds()             //毫秒
+    };
+    if (/(y+)/.test(fmt))
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt))
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
+function getDateDiff(dateTimeStamp) {
+    var minute = 1000 * 60;
+    var hour = minute * 60;
+    var day = hour * 24;
+    var halfamonth = day * 15;
+    var month = day * 30;
+    var now = new Date().getTime();
+    var diffValue = now - dateTimeStamp;
+    if (diffValue < 0) {
+        return;
+    }
+    var monthC = diffValue / month;
+    var weekC = diffValue / (7 * day);
+    var dayC = diffValue / day;
+    var hourC = diffValue / hour;
+    var minC = diffValue / minute;
+    if (monthC >= 1) {
+        result = " " + parseInt(monthC) + "月前";
+    }
+    else if (weekC >= 1) {
+        result = " " + parseInt(weekC) + "周前";
+    }
+    else if (dayC >= 1) {
+        result = " " + parseInt(dayC) + "天前";
+    }
+    else if (hourC >= 1) {
+        result = " " + parseInt(hourC) + "小时前";
+    }
+    else if (minC >= 1) {
+        result = " " + parseInt(minC) + "分钟前";
+    } else
+        result = " 刚刚";
+    return result;
+}
+
+var expireTime1H = 1000 * 60 * 60; // 1小时过期
+function isNightRange(beginTime, endTime) {
+    let nowDate = new Date();
+    var nowTime = nowDate.getHours() + ":" + nowDate.getMinutes();
+    var strb = beginTime.split(":");
+    if (strb.length != 2) {
+        return false;
+    }
+
+    var stre = endTime.split(":");
+    if (stre.length != 2) {
+        return false;
+    }
+
+    var strn = nowTime.split(":");
+    if (stre.length != 2) {
+        return false;
+    }
+
+    var b = new Date();
+    var e = new Date();
+    var n = new Date();
+
+    b.setHours(strb[0]);
+    b.setMinutes(strb[1]);
+    e.setHours(stre[0]);
+    e.setMinutes(stre[1]);
+    n.setHours(strn[0]);
+    n.setMinutes(strn[1]);
+
+    console.log(n.getTime());
+    if (n.getTime() - b.getTime() > 0 && n.getTime() - e.getTime() < 0) {
+        return true;
+    } else {
+        console.log("now Date is：" + n.getHours() + ":" + n.getMinutes() + "，is not Night！");
+        return false;
+    }
+}
+
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window));

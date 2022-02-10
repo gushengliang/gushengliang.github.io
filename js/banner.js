@@ -1,1 +1,149 @@
-var banner,Carousel=function(){};function loadBanner(){$("#banner").length>0&&(null==banner||null==banner?$.getJSON("./json_data/banner.json",(function(a){var t=a;(banner=new Carousel).init({container:"#banner",datas:t,autoplaySpeed:8e3,autoplay:!0}),banner.load()})):banner.load())}Carousel.prototype={container:"",datas:null,autoplaySpeed:null,autoplay:!1,hasPlay:!1,init:function(a){this.container=a.container,this.datas=a.datas,this.autoplaySpeed=a.autoplaySpeed,this.autoplay=a.autoplay},load:function(){options={container:this.container,datas:this.datas,autoplaySpeed:this.autoplaySpeed,autoplay:this.autoplay},$(this.container).html(""),this.createCarousel(options),this.arrowHover(),this.tabImg(),this.setZindex(),(options.autoplay||1==this.autoplay)&&this.autoPlay(this.autoplaySpeed)},createCarousel:function(a){this.createDOM(this.container,a)},createDOM:function(a,t){$(a).html("<div class='carousel-box clearfix'><div class='transverse-box pull-left'></div><div class='vertical-box pull-right'><ul></ul></div><span class='left-arrow'>‹</span><span class='right-arrow'>›</span></div>");for(var e=t.datas.length,i=0;i<e;i++)$(".transverse-box").append("<div class='img-item'><a href='"+t.datas[i].url+"' target='_blank'><img src='"+t.datas[i].img+"' url='"+t.datas[i].url+"' alt='"+t.datas[i].alt+"'></a></div>");$(".vertical-box ul").append("<li><a href='"+t.datas[1].url+"' target='_blank'><img src='"+t.datas[1].img+"' alt='"+t.datas[1].alt+"'></a></li>"),$(".vertical-box ul").append("<li><a href='"+t.datas[2].url+"' target='_blank'><img src='"+t.datas[2].img+"' alt='"+t.datas[2].alt+"'></a></li>"),$(".transverse-box").find(".img-item").eq(0).siblings().fadeOut(800),$(".transverse-box").find(".img-item").eq(0).fadeIn(800)},arrowHover:function(){$(".carousel-box").hover((function(){$(".left-arrow,.right-arrow").css("display","flex")}),(function(){$(".left-arrow,.right-arrow").css("display","none")}))},tabImg:function(){var a=this;$(".left-arrow").on("click",(function(){a.changeZindex_add()})),$(".right-arrow").on("click",(function(){a.changeZindex_sub()}))},setZindex:function(){for(var a=$(".transverse-box").find(".img-item").length,t=1e4;t<a;t++)$(".img-item").eq(t).css({zIndex:t}),$(".img-item").eq(t).attr("Zindex",t)},changeZindex_add:function(){var a=$(".transverse-box").find(".img-item").eq(0).find("img"),t=a.attr("src"),e=a.attr("alt"),i=a.attr("url");$(".transverse-box").find(".img-item").eq(0).remove(),$(".transverse-box").append("<div class='img-item'><a href='"+i+"' target='_blank'><img src='"+t+"' alt='"+e+"' url='"+i+"'></a><div>");var r=$(".transverse-box").find(".img-item").eq(1).find("img"),n=r.attr("src"),s=r.attr("url"),l=$(".transverse-box").find(".img-item").eq(2).find("img"),o=l.attr("src"),d=l.attr("url");$(".vertical-box ul").find("li").eq(0).find("img").attr("src",n),$(".vertical-box ul").find("li").eq(0).find("a").attr("href",s),$(".vertical-box ul").find("li").eq(1).find("img").attr("src",o),$(".vertical-box ul").find("li").eq(1).find("a").attr("href",d),$(".transverse-box").find(".img-item").eq(0).siblings().fadeOut(800),$(".transverse-box").find(".img-item").eq(0).fadeIn(800)},changeZindex_sub:function(){var a=$(".transverse-box").find(".img-item").length,t=$(".transverse-box").find(".img-item").eq(a-1).find("img"),e=t.attr("src"),i=t.attr("alt"),r=t.attr("url");$(".transverse-box").find(".img-item").eq(a-1).remove(),$(".transverse-box").prepend("<div class='img-item'><a href='"+r+"' target='_blank'><img src='"+e+"' alt='"+i+"' url='"+r+"'></a><div>");var n=$(".transverse-box").find(".img-item").eq(1).find("img"),s=n.attr("src"),l=n.attr("url"),o=$(".transverse-box").find(".img-item").eq(2).find("img"),d=o.attr("src"),u=o.attr("url");$(".vertical-box ul").find("li").eq(0).find("img").attr("src",s),$(".vertical-box ul").find("li").eq(0).find("a").attr("href",l),$(".vertical-box ul").find("li").eq(1).find("img").attr("src",d),$(".vertical-box ul").find("li").eq(1).find("a").attr("href",u),$(".transverse-box").find(".img-item").eq(0).siblings().fadeOut(800),$(".transverse-box").find(".img-item").eq(0).fadeIn(800)},autoPlay:function(a){var t=this;this.changeZindex_sub(),this.hasPlay||setTimeout((function(){t.autoPlay(a),this.hasPlay=!0}),a)}},$(document).ready(loadBanner());
+// reference https://dp2px.com/2019/08/13/hexo-carousel/
+var Carousel = function () { };
+Carousel.prototype = {
+    container: "",
+    datas: null,
+    autoplaySpeed: null,
+    autoplay: false,
+    hasPlay: false,
+    init: function (options) {
+        this.container = options.container;
+        this.datas = options.datas;
+        this.autoplaySpeed = options.autoplaySpeed;
+        this.autoplay = options.autoplay;
+    },
+    load: function () {
+        options = {
+            container: this.container,
+            datas: this.datas,
+            autoplaySpeed: this.autoplaySpeed,
+            autoplay: this.autoplay
+        };
+
+        $(this.container).html("");
+        this.createCarousel(options);
+        this.arrowHover();
+        this.tabImg();
+        this.setZindex();
+
+        if (options.autoplay || this.autoplay == true) {
+            this.autoPlay(this.autoplaySpeed);
+        } else {
+            return;
+        }
+    },
+    createCarousel: function (options) {
+        this.createDOM(this.container, options);
+    },
+    createDOM: function (container, options) {
+        var html = "";
+        html = "<div class='carousel-box clearfix'>" + "<div class='transverse-box pull-left'>" + "</div>" + "<div class='vertical-box pull-right'>" + "<ul>" + "</ul>" + "</div>" + "<span class='left-arrow'>‹</span>" + "<span class='right-arrow'>›</span>" + "</div>";
+        $(container).html(html);
+        var imgLength = options.datas.length;
+        for (var i = 0; i < imgLength; i++) {
+            $(".transverse-box").append("<div class='img-item'><a href='" + options.datas[i].url + "' target='_blank'><img src='" + options.datas[i].img + "' url='" + options.datas[i].url + "' alt='" + options.datas[i].alt + "'></a></div>");
+        }
+        ; $(".vertical-box ul").append("<li><a href='" + options.datas[1].url + "' target='_blank'><img src='" + options.datas[1].img + "' alt='" + options.datas[1].alt + "'></a></li>");
+        $(".vertical-box ul").append("<li><a href='" + options.datas[2].url + "' target='_blank'><img src='" + options.datas[2].img + "' alt='" + options.datas[2].alt + "'></a></li>");
+        $(".transverse-box").find(".img-item").eq(0).siblings().fadeOut(800);
+        $(".transverse-box").find(".img-item").eq(0).fadeIn(800);
+    },
+    arrowHover: function () {
+        $(".carousel-box").hover(function () {
+            $(".left-arrow,.right-arrow").css("display", "flex");
+        }, function () {
+            $(".left-arrow,.right-arrow").css("display", "none");
+        })
+    },
+    tabImg: function () {
+        var obj = this;
+        $(".left-arrow").on("click", function () {
+            obj.changeZindex_add();
+        });
+        $(".right-arrow").on("click", function () {
+            obj.changeZindex_sub();
+        })
+    },
+    setZindex: function () {
+        var imgNum = $(".transverse-box").find(".img-item").length;
+        for (var i = 10000; i < imgNum; i++) {
+            $(".img-item").eq(i).css({
+                "zIndex": i
+            });
+            $(".img-item").eq(i).attr("Zindex", i);
+        }
+    },
+    changeZindex_add: function () {
+        var firstImg = $(".transverse-box").find(".img-item").eq(0).find("img");
+        var firstImgSrc = firstImg.attr("src");
+        var firstImgAlt = firstImg.attr("alt");
+        var firstImgUrl = firstImg.attr("url");
+        $(".transverse-box").find(".img-item").eq(0).remove();
+        $(".transverse-box").append("<div class='img-item'><a href='" + firstImgUrl + "' target='_blank'><img src='" + firstImgSrc + "' alt='" + firstImgAlt + "' url='" + firstImgUrl + "'></a><div>");
+        var l1Img = $(".transverse-box").find(".img-item").eq(1).find("img");
+        var lastImgSrc = l1Img.attr("src");
+        var lastImgUrl = l1Img.attr("url");
+        var l2Img = $(".transverse-box").find(".img-item").eq(2).find("img");
+        var last2ImgSrc = l2Img.attr("src");
+        var last2ImgUrl = l2Img.attr("url");
+        $(".vertical-box ul").find("li").eq(0).find("img").attr("src", lastImgSrc);
+        $(".vertical-box ul").find("li").eq(0).find("a").attr("href", lastImgUrl);
+        $(".vertical-box ul").find("li").eq(1).find("img").attr("src", last2ImgSrc);
+        $(".vertical-box ul").find("li").eq(1).find("a").attr("href", last2ImgUrl);
+        $(".transverse-box").find(".img-item").eq(0).siblings().fadeOut(800);
+        $(".transverse-box").find(".img-item").eq(0).fadeIn(800);
+    },
+    changeZindex_sub: function () {
+        var imgNum = $(".transverse-box").find(".img-item").length;
+        var lastImg = $(".transverse-box").find(".img-item").eq(imgNum - 1).find("img");
+        var lastImgSrc = lastImg.attr("src");
+        var lastImgAlt = lastImg.attr("alt");
+        var lastImgUrl = lastImg.attr("url");
+        $(".transverse-box").find(".img-item").eq(imgNum - 1).remove();
+        $(".transverse-box").prepend("<div class='img-item'><a href='" + lastImgUrl + "' target='_blank'><img src='" + lastImgSrc + "' alt='" + lastImgAlt + "' url='" + lastImgUrl + "'></a><div>");
+        var f1Img = $(".transverse-box").find(".img-item").eq(1).find("img");
+        var firstImgSrc = f1Img.attr("src");
+        var firstImgUrl = f1Img.attr("url");
+        var f2Img = $(".transverse-box").find(".img-item").eq(2).find("img");
+        var first2ImgSrc = f2Img.attr("src");
+        var first2ImgUrl = f2Img.attr("url");
+        $(".vertical-box ul").find("li").eq(0).find("img").attr("src", firstImgSrc);
+        $(".vertical-box ul").find("li").eq(0).find("a").attr("href", firstImgUrl);
+        $(".vertical-box ul").find("li").eq(1).find("img").attr("src", first2ImgSrc);
+        $(".vertical-box ul").find("li").eq(1).find("a").attr("href", first2ImgUrl);
+        $(".transverse-box").find(".img-item").eq(0).siblings().fadeOut(800);
+        $(".transverse-box").find(".img-item").eq(0).fadeIn(800);
+    },
+    autoPlay: function (x) {
+        var obj = this;
+        this.changeZindex_sub();
+        if (!this.hasPlay) {
+            setTimeout(function () {
+                obj.autoPlay(x);
+                this.hasPlay = true;
+            }, x);
+        }
+    }
+};
+var banner;
+function loadBanner() {
+    if ($('#banner').length > 0) {
+        if (banner == undefined || banner == null) {
+            $.getJSON("./json_data/banner.json", function (data) {
+                banner = new Carousel();
+                //图片地址数组。不要少于三张
+                var imgSrcDate = data;
+                banner.init({
+                    container: "#banner",
+                    datas: imgSrcDate,
+                    autoplaySpeed: 8000,
+                    autoplay: true
+                });
+                banner.load();
+            });
+        } else {
+            banner.load();
+        }
+    }
+}
+$(document).ready(loadBanner());
