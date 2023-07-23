@@ -1,0 +1,4 @@
+[[redirects]]
+  from = "https://elated-bohr-48a12b.netlify.app/*"
+  to = "https://www.lvjie.eu.org/:splat"
+  force = true
